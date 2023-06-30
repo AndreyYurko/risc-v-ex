@@ -1,10 +1,13 @@
 .globl sine
 
 default_answer = 0x312d
+.data
+# result: .space 20
 
 .text
+.align 4
+result: .space 20
 # if you need some data, put it here
-result: .word 0
 
 .section .text
 
@@ -14,22 +17,48 @@ result: .word 0
 #	a2 -- output string buffer for the string result
 sine:
 	# implement here
-	
+
+	li a3, 0
+	li a5, 16	
 loop:
-	lbu a0, 0(a1)
-	beqz a0, done
+	# shift a3 4 bits to the left - each 4 bits are decimal number
+	slli a3, a3, 4
+
+	# read char
+	lbu a4, 0(a1)
+	beqz a5, transform_to_string
+	beqz a4, next_step
+
+	# check if char is '.'
 	li t0, '.'
-	beq t0, a0, next	
+	beq t0, t0, next_char	
 
-	addi a0, a0, -'0'
-	add a3, a3, a0
-	la a3, result
-next:
-	add a1, a1, 1
+	# get decimal number and replace 4 last bits with it
+	addi a4, a4, -'0'
+	add a3, a3, a4
+
+next_char:
+	addi a1, a1, 1
+next_step:
+	addi a5, a5, -1
 	j loop
-done:
-	sw	a3, 0(a2)
 
+transform_to_string:
+	li a5, 17
+	la a4, result
+string_loop:
+	beqz a5, done	
+
+	srli t0, a3, 60
+	addi t0, t0, '0'
+	sb t0, 0(a4)
+
+	slli a3, a3, 4
+	addi a5, a5, -1
+
+	j string_loop
+done:
+	la a2, result
 
 	ret
 	
