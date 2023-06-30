@@ -1,12 +1,8 @@
 .globl sine
 
 default_answer = 0x312d
-.data
-# result: .space 20
 
 .text
-.align 4
-result: .space 20
 # if you need some data, put it here
 
 .section .text
@@ -19,7 +15,7 @@ sine:
 	# implement here
 
 	li a3, 0
-	li a5, 16	
+	li a5, 16
 loop:
 	# shift a3 4 bits to the left - each 4 bits are decimal number
 	slli a3, a3, 4
@@ -31,7 +27,7 @@ loop:
 
 	# check if char is '.'
 	li t0, '.'
-	beq t0, t0, next_char	
+	beq t0, a4, next_char	
 
 	# get decimal number and replace 4 last bits with it
 	addi a4, a4, -'0'
@@ -45,20 +41,34 @@ next_step:
 
 transform_to_string:
 	li a5, 17
-	la a4, result
+	mv a4, a2
 string_loop:
 	beqz a5, done	
 
+	# check if we need to add 
+	li t0, 16
+	beq t0, a5, add_dot
+
+	# get decimal number
 	srli t0, a3, 60
+
+	# transform it to char
 	addi t0, t0, '0'
+	
 	sb t0, 0(a4)
 
 	slli a3, a3, 4
+next_string_step:
 	addi a5, a5, -1
+	addi a4, a4, 1
 
 	j string_loop
+
+add_dot:
+	li t0, '.'
+	sb t0, 0(a4)
+	j next_string_step
 done:
-	la a2, result
 
 	ret
 	
