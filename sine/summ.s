@@ -1,35 +1,52 @@
 .globl summ
 
+# .section .data
+# ra_storage:
+# .align 8
+# .space 8
+
+# .section .text
 # Summ
 #     Params:
-#         t4 - first number
-#         t5 - second number
-#         t5 - result
+#         t5 - first number
+#         t6 - second number
+#         t6 - result
 
 summ:
-	add t5, t5, t4
-	li t6, 60
+	add t6, t6, t5
+	li t4, 60
 
 normalize_step:
 	# get current digit
-	sll t3, a7, t6
+	sll t3, t6, t4
 	srli t3, t3, 60
 	
-	li t4, 9
-	blt t3, t4, continue_summ
+	# t5 now free
+	li t5, 9
+	blt t3, t5, continue_summ
 
-	addi t3, t3, -10
+	# substract 10 from digit
+	li t3, 10
 	
-	li t4, 60
-	sub t4, t4, t6
+	li t5, 60
+	sub t5, t5, t4
 
-	sll t3, t3, t4
+	sll t3, t3, t5
 
-	sub t5, t5, t3
+	sub t6, t6, t3
+
+	# add 1 to the next one
+	li t3, 1
+	li t5, 64
+	sub t5, t5, t4
+	
+	sll t3, t3, t5
+
+	add t6, t6, t3
 
 continue_summ:
-	beqz t6, done
-	addi t6, t6, -4
+	beqz t4, done
+	addi t4, t4, -4
 	j normalize_step
 
 done:
