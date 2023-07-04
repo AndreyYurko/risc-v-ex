@@ -7,7 +7,7 @@
 #      a7 - result
 
 mult:
-	li t2, 0
+	li t1, 0
 	li a5, 16
 
 step_of_mult:
@@ -16,14 +16,17 @@ step_of_mult:
 	# get decimal
 	srli t0, a7, 60
 	slli a7, a7, 4
-	
-	mv t1, t0
 
 step_of_mult_by_dec:
-	beqz t1, continue_step
-	add a0, a0, a6
-	addi t1, t1, -1
-	j step_of_mult
+	beqz t0, continue_step
+	mv t4, a6
+	mv t5, t1
+	call summ
+	
+	mv t1, t5
+
+	addi t0, t0, -1
+	j step_of_mult_by_dec
 	
 continue_step:
 	srli a6, a6, 4
