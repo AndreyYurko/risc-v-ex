@@ -2,8 +2,12 @@
 
 default_answer = 0x312d
 
-.text
+.section .data
 # if you need some data, put it here
+var:
+.align 8
+.space 100
+
 
 .section .text
 
@@ -22,7 +26,7 @@ loop:
 
 	# read char
 	lbu a4, 0(a1)
-	beqz a5, transform_to_string
+	beqz a5, calculation
 	beqz a4, next_step
 
 	# check if char is '.'
@@ -38,6 +42,13 @@ next_char:
 next_step:
 	addi a5, a5, -1
 	j loop
+
+calculation:
+	mv a6, a3
+	mv a7, a3
+	call mult
+	mv a3, a7
+	j transform_to_string
 
 transform_to_string:
 	li a5, 17
