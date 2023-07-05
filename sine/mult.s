@@ -22,6 +22,7 @@ step_of_mult_by_dec:
 	beqz t1, continue_step
 	mv t5, a6
 	mv t6, t2
+	li t4, 1
 
 	sd ra, 24(t0)
 	sd a5, 32(t0)
