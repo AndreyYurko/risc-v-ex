@@ -23,9 +23,15 @@ step_of_mult_by_dec:
 	mv t5, a6
 	mv t6, t2
 
-	sw ra, 8(t0)
+	sd ra, 24(t0)
+	sd a5, 32(t0)
+	sd a6, 40(t0)
+	sd a7, 48(t0)
 	call summ
-	lw ra, 8(t0)
+	ld ra, 24(t0)
+	ld a5, 32(t0)
+	ld a6, 40(t0)
+	ld a7, 48(t0)
 	
 	mv t2, t6
 

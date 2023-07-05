@@ -4,9 +4,9 @@ default_answer = 0x312d
 
 .section .data
 # if you need some data, put it here
-ra_storage:
+var:
 .align 8
-.space 24
+.space 100
 
 
 .section .text
@@ -20,7 +20,7 @@ sine:
 
 	li a3, 0
 	li a5, 16
-	la t0, ra_storage
+	la t0, var
 loop:
 	# shift a3 4 bits to the left - each 4 bits are decimal number
 	slli a3, a3, 4
@@ -49,8 +49,10 @@ calculation:
 	mv a7, a3
 	
 	sw ra, 0(t0)
+	sw a3, 8(t0)
 	call mult
 	lw ra, 0(t0)
+	lw a3, 8(t0)
 
 	mv a3, a7
 	j transform_to_string

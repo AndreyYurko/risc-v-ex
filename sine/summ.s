@@ -13,41 +13,42 @@
 #         t6 - result
 
 summ:
-	add t6, t6, t5
-	li t4, 60
+	mv a6, t5
+	mv a7, t6
+	li t6, 0
+	li t5, 60
+	# overflow
+	li a5, 0
 
-normalize_step:
-	# get current digit
-	sll t3, t6, t4
+summ_step:
+	# get current digits
+	sll t3, a6, t5
 	srli t3, t3, 60
+
+	sll t4, a7, t5
+	srli t4, t4, 60
 	
-	# t5 now free
-	li t5, 9
-	blt t3, t5, continue_summ
+	# summ digits
+	add t3, t3, t4
+	add t3, t3, a5
+	li a5, 0
+
+	li t4, 10
+	blt t3, t4, continue_summ
 
 	# substract 10 from digit
-	li t3, 10
-	
-	li t5, 60
-	sub t5, t5, t4
-
-	sll t3, t3, t5
-
-	sub t6, t6, t3
-
-	# add 1 to the next one
-	li t3, 1
-	li t5, 64
-	sub t5, t5, t4
-	
-	sll t3, t3, t5
-
-	add t6, t6, t3
+	addi t3, t3, -10
+	li a5, 1
 
 continue_summ:
-	beqz t4, done
-	addi t4, t4, -4
-	j normalize_step
+	li t4, 60
+	sub t4, t4, t5
+	sll t3, t3, t4
+	add t6, t6, t3
+
+	beqz t5, done
+	addi t5, t5, -4
+	j summ_step
 
 done:
 	ret
