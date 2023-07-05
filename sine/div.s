@@ -35,8 +35,7 @@ ans_inc_loop:
 	sll t4, t4, t3
 	add a7, a7, t4
 	
-	sd ra, 72(t0)
-	sd a3, 80(t0)
+	sd ra, 80(t0)
 	sd a4, 88(t0)
 	sd a5, 96(t0)
 	sd a6, 104(t0)
@@ -48,8 +47,8 @@ ans_inc_loop:
 	
 	call summ
 
-	ld ra, 72(t0)
 	mv a3, t6
+	ld ra, 80(t0)
 	ld a4, 88(t0)
 	ld a5, 96(t0)
 	ld a6, 104(t0)

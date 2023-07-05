@@ -1,6 +1,6 @@
 .globl sine
 
-default_answer = 0x312d
+max_steps = 0x5
 
 .section .data
 # if you need some data, put it here
@@ -45,17 +45,80 @@ next_step:
 	j loop
 
 calculation:
-	mv a5, a3
-	mv a6, a3
+	# a3 - ans
+	# a4 - square of x
+	# a5 - last member of Taylor series
+	# a6 - last number in factorial
+	# a7 - current sign
+	sd ra, 0(t0)
+	sd a3, 8(t0)
 	
-	sw ra, 0(t0)
-	sw a3, 8(t0)
-	call div
-	lw ra, 0(t0)
-	lw a3, 8(t0)
+	mv a6, a3
+	mv a7, a3
+	call mult
 
-	mv a3, a7
-	j transform_to_string
+	mv a4, a7
+	ld a3, 8(t0)
+	mv a5, a3
+	li a6, 1
+	li a7, -1
+
+step_of_taylor:
+	li t1, max_steps
+	bgt a6, t1, transform_to_string
+
+	sd a3, 8(t0)
+	sd a4, 16(t0)
+	sd a6, 24(t0)
+	sd a7, 32(t0)
+
+	mv a6, a5
+	mv a7, a4
+	call mult
+
+	mv a5, a7
+	ld a6, 24(t0)
+
+	addi a6, a6, 1
+	
+	# a5 already == dividend
+	# a6 already == divider
+	call div
+
+	mv a5, a7
+	ld a6, 24(t0)
+
+	addi a6, a6, 2
+	
+	# a5 already == dividend
+	# a6 already == divider
+	call div
+
+	mv a5, a7
+	ld a6, 24(t0)
+	sd a5, 24(t0)
+	
+	li t4, 1
+	mv t5, a6
+	li t6, 2
+	call summ
+
+	mv a6, t6
+	ld a3, 8(t0)
+	ld a4, 16(t0)
+	ld a5, 24(t0)
+	ld a7, 32(t0)
+	
+	li t2, -1
+	beq a7, t2, substract_member
+add_member:
+	add a3, a3, a5
+	li a7, -1
+	j step_of_taylor
+substract_member:
+	sub a3, a3, a5
+	li a7, 1
+	j step_of_taylor
 
 transform_to_string:
 	li a5, 17
@@ -87,6 +150,6 @@ add_dot:
 	sb t1, 0(a4)
 	j next_string_step
 done:
-
+	ld ra, 0(t0)
 	ret
 	
