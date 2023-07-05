@@ -34,8 +34,28 @@ ans_inc_loop:
 	li t4, 1
 	sll t4, t4, t3
 	add a7, a7, t4
-
 	
+	sd ra, 72(t0)
+	sd a3, 80(t0)
+	sd a4, 88(t0)
+	sd a5, 96(t0)
+	sd a6, 104(t0)
+	sd a7, 112(t0)
+	
+	li t4, 0
+	mv t5, a3
+	mv t6, a6
+	
+	call summ
+
+	ld ra, 72(t0)
+	mv a3, t6
+	ld a4, 88(t0)
+	ld a5, 96(t0)
+	ld a6, 104(t0)
+	ld a7, 112(t0)
+
+	j ans_inc_loop
 
 iteration_end:
 	addi a4, a4, 4

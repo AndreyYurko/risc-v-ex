@@ -6,7 +6,7 @@ default_answer = 0x312d
 # if you need some data, put it here
 var:
 .align 8
-.space 100
+.space 200
 
 
 .section .text
@@ -45,12 +45,12 @@ next_step:
 	j loop
 
 calculation:
+	mv a5, a3
 	mv a6, a3
-	mv a7, a3
 	
 	sw ra, 0(t0)
 	sw a3, 8(t0)
-	call mult
+	call div
 	lw ra, 0(t0)
 	lw a3, 8(t0)
 
