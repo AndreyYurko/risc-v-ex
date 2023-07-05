@@ -1,6 +1,6 @@
 .globl sine
 
-max_steps = 0x5
+max_steps = 0x99
 
 .section .data
 # if you need some data, put it here
@@ -105,19 +105,32 @@ step_of_taylor:
 
 	mv a6, t6
 	ld a3, 8(t0)
-	ld a4, 16(t0)
+	sd a6, 8(t0)
 	ld a5, 24(t0)
 	ld a7, 32(t0)
+
+	mv t5, a3
+	mv t6, a5
 	
 	li t2, -1
 	beq a7, t2, substract_member
 add_member:
-	add a3, a3, a5
+	li t4, 1
+	call summ	
+
 	li a7, -1
-	j step_of_taylor
+	j continue_taylor_step
 substract_member:
-	sub a3, a3, a5
+	li t4, 0
+	call summ
 	li a7, 1
+continue_taylor_step:
+	
+	mv a3, t6
+	ld a4, 16(t0)
+	ld a5, 24(t0)
+	ld a6, 8(t0)
+
 	j step_of_taylor
 
 transform_to_string:
