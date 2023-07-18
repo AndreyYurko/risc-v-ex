@@ -32,7 +32,7 @@ loop:
 
 	# check if char is '.'
 	li t1, '.'
-	beq t1, a4, next_char	
+	beq t1, a4, process_dot	
 
 	# get decimal number and replace 4 last bits with it
 	addi a4, a4, -'0'
@@ -43,6 +43,9 @@ next_char:
 next_step:
 	addi a5, a5, -1
 	j loop
+process_dot:
+	srli a3, a3, 4
+	j next_char
 
 calculation:
 	# a3 - ans
