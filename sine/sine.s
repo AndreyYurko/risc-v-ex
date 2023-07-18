@@ -30,9 +30,11 @@ loop:
 	beqz a5, calculation
 	beqz a4, next_step
 
-	# check if char is '.'
+	# check if char is '.' or '\n'
 	li t1, '.'
 	beq t1, a4, next_char	
+	li t1, 10
+	beq t1, a4, next_char
 
 	# get decimal number and replace 4 last bits with it
 	addi a4, a4, -'0'

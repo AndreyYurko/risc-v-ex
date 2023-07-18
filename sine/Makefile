@@ -4,7 +4,7 @@ all:
 	as -g -march=rv64i mult.s -o mult.o
 	as -g -march=rv64i summ.s -o summ.o
 	as -g -march=rv64i div.s -o div.o
-	size sine.o
+	size sine.o mult.o summ.o div.o
 
 	ld -g div.o mult.o summ.o sine.o main_sine.o -o ./solution
 
