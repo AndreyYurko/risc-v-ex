@@ -10,7 +10,8 @@
 mult:
 	li t2, 0
 	li a5, 64
-	slli a6, a6, 4
+	slli a6, a6, 2
+	slli a7, a7, 1
 
 step_of_mult:
 	beqz a5, done

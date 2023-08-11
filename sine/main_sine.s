@@ -5,7 +5,7 @@ exit    = 93
 .section .data 
 
 # This is  0-ended string with input data
-input: 	.asciz "1.102"
+input: 	.asciz "1.1234"
 
 # This will be used for 0-ended string with result. Use "-1" if you cannot calculate the function
 output:                
