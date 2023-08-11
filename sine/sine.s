@@ -19,12 +19,14 @@ sine:
 	# implement here
 
 	li a3, 0
-	li a5, 16
+	li a5, 19
 	la t0, var
 loop:
-	# shift a3 4 bits to the left - each 4 bits are decimal number
-	slli a3, a3, 4
-
+	# multiply by 10
+	slli t2, a3, 3
+	slli a3, a3, 1
+	add a3, a3, t2
+loop_without_mult:
 	# read char
 	lbu a4, 0(a1)
 	beqz a5, calculation
@@ -44,8 +46,9 @@ next_step:
 	addi a5, a5, -1
 	j loop
 process_dot:
-	srli a3, a3, 4
-	j next_char
+	addi a1, a1, 1
+	addi a5, a5, -1
+	j loop_without_mult
 
 calculation:
 	# a3 - ans
@@ -99,65 +102,58 @@ step_of_taylor:
 
 	mv a5, a7
 	ld a6, 24(t0)
-	sd a5, 24(t0)
+
+	addi a6, a6, 2
 	
-	li t4, 1
-	mv t5, a6
-	li t6, 2
-	call summ
-
-	mv a6, t6
 	ld a3, 8(t0)
-	sd a6, 8(t0)
-	ld a5, 24(t0)
+	ld a4, 16(t0)
 	ld a7, 32(t0)
-
-	mv t5, a3
-	mv t6, a5
 	
 	li t2, -1
 	beq a7, t2, substract_member
 add_member:
-	li t4, 1
-	call summ	
+	add a5, a5, a3	
 
 	li a7, -1
-	j continue_taylor_step
+	j step_of_taylor
 substract_member:
-	li t4, 0
-	call summ
+	sub a5, a5, a3
 	li a7, 1
-continue_taylor_step:
-	
-	mv a3, t6
-	ld a4, 16(t0)
-	ld a5, 24(t0)
-	ld a6, 8(t0)
-
 	j step_of_taylor
 
 transform_to_string:
-	li a5, 17
+	li a5, 20
 	mv a4, a2
+	addi a4, a4, 19
 string_loop:
 	beqz a5, done	
 
-	# check if we need to add 
-	li t1, 16
+	# check if we need to add dot
+	li t1, 2
 	beq t1, a5, add_dot
 
 	# get decimal number
-	srli t1, a3, 60
+	sd ra, 0(t0)
+	sd a4, 8(t0)
+	sd a5, 16(t0)
+	mv a5, a3
+	li a6, 10
+	call div
+	mv t1, a3
+	mv a3, a7
+
+	ld ra, 0(t0)
+	ld a4, 8(t0)
+	ld a5, 16(t0)
 
 	# transform it to char
 	addi t1, t1, '0'
 	
 	sb t1, 0(a4)
 
-	slli a3, a3, 4
 next_string_step:
 	addi a5, a5, -1
-	addi a4, a4, 1
+	addi a4, a4, -1
 
 	j string_loop
 
@@ -166,6 +162,5 @@ add_dot:
 	sb t1, 0(a4)
 	j next_string_step
 done:
-	ld ra, 0(t0)
 	ret
 	
